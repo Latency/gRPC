@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace Grpc.Server.Services
 {
     // Here "User" in "User.UserBase" refers to the "User" service in the proto file
-    public class UsersService : User.UserBase
+    public class UsersService(ILogger<UsersService> logger) : User.UserBase
     {
-        private readonly ILogger<UsersService> _logger;
+        // ReSharper disable once InconsistentNaming
         private static readonly List<UserInGroupViewModel> _users = new Faker<UserInGroupViewModel>()
             .RuleFor(x => x.Id, x => x.IndexFaker + 1)
             .RuleFor(x => x.MembershipId, x => x.Random.Int(1, 100))
@@ -20,11 +20,6 @@ namespace Grpc.Server.Services
             .RuleFor(x => x.EmailAddress, x => x.Person.Email)
             .RuleFor(x => x.Role, x => x.PickRandom<UserInGroupViewModel.Types.Role>())
             .Generate(10);
-
-        public UsersService(ILogger<UsersService> logger)
-        {
-            _logger = logger;
-        }
 
         public override Task<UsersInGroupListViewModel> GetUsersInGroupList(
             GetUsersInGroupViewModel request,
@@ -56,7 +51,7 @@ namespace Grpc.Server.Services
             ServerCallContext context)
         {
             var userId = request.UserId;
-            _logger.LogInformation($"Getting user with ID {userId}");
+            logger.LogInformation($"Getting user with ID {userId}");
 
             if (userId < 1)
             {
@@ -64,7 +59,7 @@ namespace Grpc.Server.Services
                 throw new RpcException(status);
             }
 
-            var user = _users.Where(x => x.Id == userId).FirstOrDefault();
+            var user = _users.FirstOrDefault(x => x.Id == userId);
 
             if (user == null)
             {

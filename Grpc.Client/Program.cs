@@ -7,33 +7,36 @@ using System.Threading.Tasks;
 
 namespace Grpc.Client
 {
-    class Program
+    internal class Program
     {
-        private const string _grpcServerAddress = "https://localhost:5001";
+        private static readonly string GrpcServerAddress = Environment.GetEnvironmentVariable("ServerAddress");
 
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            using var grpcChannel = GrpcChannel.ForAddress(_grpcServerAddress);
+            using var grpcChannel = GrpcChannel.ForAddress(GrpcServerAddress);
             var userServiceClient = new User.UserClient(grpcChannel);
 
             GetUsersInGroupList(userServiceClient);
             Console.WriteLine("");
             await GetUsersInGroupStream(userServiceClient);
 
-            Console.WriteLine("");
-            Console.WriteLine("Enter the ID of the user to list their details, or type \"exit\" to quit.");
+            Console.WriteLine($"{Environment.NewLine}Enter the ID of the user to list their details, or type \"exit\" to quit.");
 
             while (true)
             {
                 var input = Console.ReadLine();
                 if (input == "exit")
-                {
                     break;
+
+                try
+                {
+                    var userId = int.Parse(input!);
+                    await GetUserById(userId, userServiceClient);
                 }
-
-                var userId = int.Parse(input);
-
-                await GetUserById(userId, userServiceClient);
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Invalid input:  {ex.Message}");
+                }
             }
 
             Console.WriteLine("End");
@@ -100,7 +103,7 @@ namespace Grpc.Client
             var httpClient = new HttpClient();
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{_grpcServerAddress}/jwt"),
+                RequestUri = new Uri($"{GrpcServerAddress}/jwt"),
                 Method = HttpMethod.Get,
                 Version = new Version(2, 0)
             };

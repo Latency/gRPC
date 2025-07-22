@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "Grpc.Client": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ServerAddress": "https://localhost:5001"
+      }
+    }
+  }
+}

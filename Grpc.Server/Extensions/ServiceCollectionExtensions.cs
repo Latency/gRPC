@@ -1,6 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+// ****************************************************************************
+// Project:  Grpc.Server
+// File:     ServiceCollectionExtensions.cs
+// Author:   Latency McLaughlin
+// Date:     07/24/2025
+// ****************************************************************************
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Grpc.Server.Extensions;
@@ -18,7 +24,7 @@ public static class ServiceCollectionExtensions
                     ValidateIssuer   = false,
                     ValidateActor    = false,
                     ValidateLifetime = true,
-                    IssuerSigningKey = securityKey,
+                    IssuerSigningKey = securityKey
                 };
             });
 

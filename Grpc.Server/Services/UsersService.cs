@@ -1,81 +1,83 @@
+// ****************************************************************************
+// Project:  Grpc.Server
+// File:     UsersService.cs
+// Author:   Latency McLaughlin
+// Date:     07/24/2025
+// ****************************************************************************
+
 using Bogus;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Grpc.Server.Services
+namespace Grpc.Server.Services;
+
+// Here "User" in "User.UserBase" refers to the "User" service in the proto file
+public class UsersService(ILogger<UsersService> logger) : User.UserBase
 {
-    // Here "User" in "User.UserBase" refers to the "User" service in the proto file
-    public class UsersService(ILogger<UsersService> logger) : User.UserBase
+    // ReSharper disable once InconsistentNaming
+    private static readonly List<UserInGroupViewModel> _users = new Faker<UserInGroupViewModel>()
+        .RuleFor(x => x.Id,           x => x.IndexFaker + 1)
+        .RuleFor(x => x.MembershipId, x => x.Random.Int(1, 100))
+        .RuleFor(x => x.FirstName,    x => x.Person.FirstName)
+        .RuleFor(x => x.Surname,      x => x.Person.LastName)
+        .RuleFor(x => x.EmailAddress, x => x.Person.Email)
+        .RuleFor(x => x.Role,         x => x.PickRandom<UserInGroupViewModel.Types.Role>())
+        .Generate(10);
+
+    public override Task<UsersInGroupListViewModel> GetUsersInGroupList(
+        GetUsersInGroupViewModel request,
+        ServerCallContext        context)
     {
-        // ReSharper disable once InconsistentNaming
-        private static readonly List<UserInGroupViewModel> _users = new Faker<UserInGroupViewModel>()
-            .RuleFor(x => x.Id, x => x.IndexFaker + 1)
-            .RuleFor(x => x.MembershipId, x => x.Random.Int(1, 100))
-            .RuleFor(x => x.FirstName, x => x.Person.FirstName)
-            .RuleFor(x => x.Surname, x => x.Person.LastName)
-            .RuleFor(x => x.EmailAddress, x => x.Person.Email)
-            .RuleFor(x => x.Role, x => x.PickRandom<UserInGroupViewModel.Types.Role>())
-            .Generate(10);
-
-        public override Task<UsersInGroupListViewModel> GetUsersInGroupList(
-            GetUsersInGroupViewModel request,
-            ServerCallContext context)
+        var usersInGroupList = new UsersInGroupListViewModel
         {
-            var usersInGroupList = new UsersInGroupListViewModel
-            {
-                Users = { _users },
-            };
+            Users = { _users }
+        };
 
-            return Task.FromResult(usersInGroupList);
+        return Task.FromResult(usersInGroupList);
+    }
+
+    public override async Task GetUsersInGroupStream(
+        GetUsersInGroupViewModel                  request,
+        IServerStreamWriter<UserInGroupViewModel> responseStream,
+        ServerCallContext                         context)
+    {
+        foreach (var user in _users)
+        {
+            await Task.Delay(100);
+            await responseStream.WriteAsync(user);
+        }
+    }
+
+    [Authorize]
+    public override Task<UserViewModel> GetUser(
+        GetUserByIdViewModel request,
+        ServerCallContext    context)
+    {
+        var userId = request.UserId;
+        logger.LogInformation($"Getting user with ID {userId}");
+
+        if (userId < 1)
+        {
+            var status = new Status(StatusCode.InvalidArgument, "User ID cannot be less than 1");
+            throw new RpcException(status);
         }
 
-        public override async Task GetUsersInGroupStream(
-            GetUsersInGroupViewModel request,
-            IServerStreamWriter<UserInGroupViewModel> responseStream,
-            ServerCallContext context)
+        var user = _users.FirstOrDefault(x => x.Id == userId);
+
+        if (user == null)
         {
-            foreach (var user in _users)
-            {
-                await Task.Delay(100);
-                await responseStream.WriteAsync(user);
-            }
+            var status = new Status(StatusCode.NotFound, $"User with ID {userId} could not be found");
+            throw new RpcException(status);
         }
 
-        [Authorize]
-        public override Task<UserViewModel> GetUser(
-            GetUserByIdViewModel request,
-            ServerCallContext context)
+        var userViewModel = new UserViewModel
         {
-            var userId = request.UserId;
-            logger.LogInformation($"Getting user with ID {userId}");
+            Id           = user.Id,
+            FirstName    = user.FirstName,
+            Surname      = user.Surname,
+            EmailAddress = user.EmailAddress
+        };
 
-            if (userId < 1)
-            {
-                var status = new Status(StatusCode.InvalidArgument, "User ID cannot be less than 1");
-                throw new RpcException(status);
-            }
-
-            var user = _users.FirstOrDefault(x => x.Id == userId);
-
-            if (user == null)
-            {
-                var status = new Status(StatusCode.NotFound, $"User with ID {userId} could not be found");
-                throw new RpcException(status);
-            }
-
-            var userViewModel = new UserViewModel
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                Surname = user.Surname,
-                EmailAddress = user.EmailAddress,
-            };
-
-            return Task.FromResult(userViewModel);
-        }
+        return Task.FromResult(userViewModel);
     }
 }

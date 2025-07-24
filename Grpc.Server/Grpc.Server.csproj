@@ -1,11 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <StartupObject>Grpc.Server.Program</StartupObject>
+    <ApplicationIcon>Honeywell.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Honeywell.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Protobuf Include="Protos\user.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\xilinx.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>

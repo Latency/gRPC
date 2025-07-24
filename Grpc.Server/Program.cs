@@ -1,5 +1,9 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+// ****************************************************************************
+// Project:  Grpc.Server
+// File:     Program.cs
+// Author:   Latency McLaughlin
+// Date:     07/24/2025
+// ****************************************************************************
 
 namespace Grpc.Server;
 

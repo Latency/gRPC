@@ -1,11 +1,13 @@
 ﻿{
   "profiles": {
-    "gRPC.Server": {
+    "Grpc.Server": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "https://localhost:5001",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "XilinxPath": "C:\\Users\\H616959\\source\\repos\\Thunderbolt\\src\\Xilinx\\bin\\Debug\\net10.0\\Xilinx.exe",
+        "XilinxPath1": "C:\\Xilinx\\SDK\\2018.3\\bin\\xsct.bat"
       }
     }
   }

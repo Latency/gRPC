@@ -59,23 +59,26 @@ internal class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapGrpcService<UsersService>();
-            //endpoints.MapGrpcService<XilinxService>();
+            endpoints.MapGrpcService<XilinxsService>();
 
             endpoints.MapGet("/jwt", async context =>
             {
                 var jwt = GenerateJwt();
-                await context.Response.WriteAsync(jwt);
+                await context.Response.WriteAsync(jwt!);
             });
 
-            endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909"); });
+            endpoints.MapGet("/", async context => {
+                await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+            });
         });
     }
 
-    private static string GenerateJwt()
+
+    private static string? GenerateJwt()
     {
         var credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
         var header      = new JwtHeader(credentials);
-        var payload     = new JwtPayload("GrpcServer", "GrpcClient", null, DateTime.Now, DateTime.Now.AddSeconds(60));
+        var payload     = new JwtPayload("GrpcServer", "GrpcClient", null!, DateTime.Now, DateTime.Now.AddSeconds(60));
         var token       = new JwtSecurityToken(header, payload);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

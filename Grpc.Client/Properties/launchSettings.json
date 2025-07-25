@@ -3,7 +3,9 @@
     "Grpc.Client": {
       "commandName": "Project",
       "environmentVariables": {
-        "ServerAddress": "https://localhost:5001"
+        "ServerAddress": "https://localhost:5001",
+        "WelcomeMessage": "Welcome to Xilinx gRPC proxy",
+        "Prompt": "xsct% "
       }
     }
   }

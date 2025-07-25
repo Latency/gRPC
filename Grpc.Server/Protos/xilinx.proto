@@ -5,8 +5,6 @@ option csharp_namespace = "Grpc.Server";
 service Xilinx {
   // Define a unary RPC (simple request-response)
   rpc SendCommand (XilinxRequest) returns (XilinxReply);
-  rpc Open (Void) returns (XilinxReply);
-  rpc Close (Void) returns (XilinxReply);
 }
 
 // Define the request message
@@ -17,7 +15,4 @@ message XilinxRequest {
 // Define the response message
 message XilinxReply {
   string message = 1;
-}
-
-message Void {
 }

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Grpc.Server": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "XilinxPath": "C:\\Users\\H616959\\source\\repos\\Thunderbolt\\src\\Xilinx\\bin\\Debug\\net10.0\\Xilinx.exe"
+      },
+      "applicationUrl": "https://localhost:5001"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "gRPC",
+    "Projects": [
+      {
+        "Path": "Grpc.Server\\Grpc.Server.csproj",
+        "Action": "Start",
+        "DebugTarget": "Grpc.Server"
+      },
+      {
+        "Path": "Grpc.Client\\Grpc.Client.csproj",
+        "Action": "Start",
+        "DebugTarget": "Grpc.Client"
+      }
+    ]
+  }
+]

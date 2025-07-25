@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Grpc.Server.Services;
 
 // Here "User" in "User.UserBase" refers to the "User" service in the proto file
-public class UsersService(ILogger<UsersService> logger) : User.UserBase
+public sealed class UsersService(ILogger<UsersService> logger) : User.UserBase
 {
     // ReSharper disable once InconsistentNaming
     private static readonly List<UserInGroupViewModel> _users = new Faker<UserInGroupViewModel>()

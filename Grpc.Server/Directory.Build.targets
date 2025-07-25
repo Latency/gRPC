@@ -1,0 +1,8 @@
+<Project>
+	<Target Name="LaunchSettings" AfterTargets="AssignProjectConfiguration">
+		<Message Text="Copying '$(MSBuildProjectDirectory)\Properties\launchSettings.$(Configuration).json' to '$(MSBuildProjectDirectory)\Properties'..." Importance="high" />
+		<Copy SourceFiles="$(MSBuildProjectDirectory)\Properties\launchSettings.$(Configuration).json"
+		      DestinationFiles="$(MSBuildProjectDirectory)\Properties\launchSettings.json"
+		      OverwriteReadOnlyFiles="True" />
+	</Target>
+</Project>
